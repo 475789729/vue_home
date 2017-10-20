@@ -1,0 +1,3 @@
+解析根url，利用contentBase提供html
+解析publicPath。利用outPath提供静态文件
+如果publicPath为/。那么根url和publicPath相等，这时优先级高的是outPath提供的静态html
