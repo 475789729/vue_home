@@ -1,6 +1,7 @@
 var path = require('path')
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 var plugins = [
     new webpack.optimize.CommonsChunkPlugin({
@@ -8,7 +9,13 @@ var plugins = [
         //filename: "commonFun.js",//导出的文件的名称
         minChunks: 2,
     }),
-    new ExtractTextPlugin('styles.css')
+    new ExtractTextPlugin('css/styles.[contenthash].css'),
+    new HtmlWebpackPlugin({
+        title: 'My App',
+        filename: 'index.html',
+        template:'index.html'
+    })
+
 ]
 if (process.env.NODE_ENV === 'production'){
     plugins.push(
@@ -40,9 +47,9 @@ module.exports = {
 
     output: {
         path: path.resolve(__dirname, './dist'),//Webpack结果存储
-        publicPath: '/dist/',//懵懂，懵逼，//然而“publicPath”项则被许多Webpack的插件用于在生产模式和开发模式下下更新内嵌到css、html，img文件里的url值
-        filename: '[name].js',
-        chunkFilename:'[name].js'
+        publicPath: '/',
+        filename: 'js/[name].[hash:8].js',
+        chunkFilename:'js/[name].[hash:8].js'
     },
     plugins,
     module: {
@@ -51,7 +58,7 @@ module.exports = {
                 test: /\.vue$/,
                 loader: 'vue-loader',
                 options: {
-                    loaders: {}
+                        extractCSS: true
                     // other vue-loader options go here
                 }
             },
@@ -71,7 +78,10 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                loader: 'style-loader!css-loader'
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: "css-loader"
+                })
             }
             ,
             {
